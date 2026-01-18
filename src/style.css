@@ -1,0 +1,18 @@
+:root {
+  --primary-yellow: #FFD700;
+  --primary-purple: #8A2BE2;
+  --primary-cream: #FFF5E1;
+  --text-color: #333;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: var(--text-color);
+
+  /* Honeycomb Background */
+  background-color: var(--primary-cream);
+  background-image: url('./assets/honeycomb.png');
+  background-repeat: repeat;
+  background-size: 300px;
+}
