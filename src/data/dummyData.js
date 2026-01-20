@@ -18,11 +18,11 @@ export const posts = [
   },
   {
     id: 2,
-    title: 'Kritik des Nihilismus aus Perspektive des Absurdismus nach Camus',
+    title: 'Hurra!',
     type: 'text',
     category: 'Literature',
-    time: '09:00',
-    text: 'Dabbeldadu, didädeldu! Test: 1',
+    time: '12:00',
+    text: 'DIE WEBSITE FUNKTIONIERT!',
     body: '',
   },
   {
