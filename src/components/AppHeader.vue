@@ -97,6 +97,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 header {
+  --header-height: 120px;
   position: relative;
   height: 120px;
   display: flex;

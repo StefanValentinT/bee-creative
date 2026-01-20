@@ -45,11 +45,19 @@ const filteredPosts = computed(() =>
 </template>
 
 <style>
+:root {
+  --header-height: 120px;
+  --sidebar-width: 260px;
+  --sidebar-padding: 5%;
+  --toggle-size: 44px;
+  --toggle-shadow: 4px 0 6px -2px rgba(0, 0, 0, 0.2);
+}
 
 html, body, #app {
   margin: 0;
   height: 100%;
   width: 100%;
+  
 }
 
 .app-container {
@@ -63,17 +71,18 @@ header, footer {
 }
 
 .main-layout {
-  position: relative; 
-  flex: 1 1 0;
-  overflow: hidden; 
+  display: flex;   
+  flex: 1 1 0;     
+  min-height: 0;  
 }
 
 
 .feed {
-  width: 100%;
-  padding: 0 5%; 
-  height: 200%;
+  flex: 1;            
+  padding: 0 5%;       
   overflow-y: auto;
-  background: var(--bg);
+  height: 100%; 
+  box-sizing: border-box;
 }
+
 </style>

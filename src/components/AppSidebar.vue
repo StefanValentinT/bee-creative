@@ -129,40 +129,41 @@ const toggleCommunity = (c) => {
 </template>
 
 <style>
+
 .sidebar-container {
-  position: absolute;
-  top: 0;
+  position: fixed;
+  top: var(--header-height);
   left: 0;
-  height: 100%;
-  z-index: 20; 
+  bottom: 0;
+  width: var(--sidebar-width);
+  z-index: 20;
 }
 
 
 .sidebar {
-  width: 260px;
+  position: relative;
+  width: var(--sidebar-width);
   height: 100%;
   background: var(--white);
   border-right: 1px solid var(--border);
-  transform: translateX(-220px); 
+  transform: translateX(-260px);
   transition: transform 0.3s ease;
-  position: relative;
+  overflow-y: auto;
 }
-
-.sidebar-content {
-  padding: 10%;
-  box-sizing: border-box;
-}
-
 
 .sidebar.open {
   transform: translateX(0);
 }
 
+.sidebar-content {
+  padding: 5%;
+  box-sizing: border-box;
+}
 
 .sidebar-toggle {
   position: absolute;
   top: 20px;
-  left: 40px; 
+  right: 220px;
   width: 44px;
   height: 44px;
   background: var(--white);
@@ -171,12 +172,11 @@ const toggleCommunity = (c) => {
   cursor: pointer;
   font-size: 20px;
   box-shadow: 4px 0 6px -2px rgba(0,0,0,0.2);
-  transition: left 0.3s ease;
+  transition: right 0.3s ease;
 }
 
-
 .sidebar-toggle.open {
-  left: 260px; 
+  right: -40px;
 }
 
 .section-header {
