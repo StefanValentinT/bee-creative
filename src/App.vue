@@ -83,6 +83,8 @@ header, footer {
   overflow-y: auto;
   height: 100%; 
   box-sizing: border-box;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 </style>
