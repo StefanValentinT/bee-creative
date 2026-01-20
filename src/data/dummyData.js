@@ -13,7 +13,7 @@ export const posts = [
     type: 'image',
     category: 'Photography',
     time: '09:13',
-    image: '/dummy/owl.jpg',
+    image: 'dummy/owl.jpg',
     body: '<a href="https://commons.wikimedia.org/wiki/File:Brown_fishing_owl.jpg">Somaskanda</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a>, via Wikimedia Commons',
   },
   {
@@ -22,7 +22,7 @@ export const posts = [
     type: 'text',
     category: 'Literature',
     time: '09:00',
-    text: 'Dabbeldadu, didädeldu!',
+    text: 'Dabbeldadu, didädeldu! Test: 1',
     body: '',
   },
   {
@@ -31,7 +31,7 @@ export const posts = [
     type: 'image',
     category: 'Music',
     time: '09:45',
-    image: '/dummy/owl.jpg',
+    image: 'dummy/owl.jpg',
     body: '',
   },
 ]

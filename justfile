@@ -1,3 +1,5 @@
 run:
-    npm run build
     npm run dev
+
+deploy:
+    npm run deploy
