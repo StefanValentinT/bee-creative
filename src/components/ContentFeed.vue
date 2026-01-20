@@ -15,7 +15,8 @@ defineProps({ posts: Array })
 
 <style scoped>
 main {
-  width: 78%;
-  padding: 30px;
+  flex: 1; 
+  padding: 0 5%; 
+  overflow-y: auto; 
 }
 </style>

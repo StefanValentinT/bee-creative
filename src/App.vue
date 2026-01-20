@@ -7,6 +7,7 @@ import AppFooter from './components/AppFooter.vue'
 import { ref, computed, watch } from 'vue'
 import { communities, posts } from './data/dummyData'
 
+
 const active = ref(
   new Set(JSON.parse(localStorage.getItem('filters')) || communities)
 )
@@ -44,37 +45,35 @@ const filteredPosts = computed(() =>
 </template>
 
 <style>
-/* BODY RESET */
+
 html, body, #app {
   margin: 0;
   height: 100%;
   width: 100%;
 }
 
-/* APP CONTAINER */
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* volle Höhe */
+  height: 100vh
 }
 
-/* HEADER & FOOTER */
 header, footer {
   flex: 0 0 auto;
 }
 
-/* MAIN LAYOUT */
 .main-layout {
-  display: flex;
+  position: relative; 
   flex: 1 1 0;
-  overflow: hidden; /* wichtig, damit nur Feed scrollt */
+  overflow: hidden; 
 }
 
-/* FEED SCROLL */
+
 .feed {
-  flex: 1 1 0;
-  overflow-y: auto; /* scroll nur hier */
-  padding: 30px;
+  width: 100%;
+  padding: 0 5%; 
+  height: 200%;
+  overflow-y: auto;
   background: var(--bg);
 }
 </style>
