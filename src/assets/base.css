@@ -1,0 +1,30 @@
+:root {
+  --bg: #f7f7f7;
+  --white: #ffffff;
+  --border: #dddddd;
+  --text: #111111;
+  --muted: #666666;
+
+  --radius: 12px;
+  --space: 20px;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Inter, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+h1,
+h2 {
+  font-weight: 600;
+}
+
+small {
+  color: var(--muted);
+}
