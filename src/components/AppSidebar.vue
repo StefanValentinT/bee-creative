@@ -9,6 +9,8 @@ defineProps({
 })
 
 const isOpen = ref(false)
+const fullHeight = ref(false) 
+
 
 const toggleSidebar = () => {
   isOpen.value = !isOpen.value
@@ -17,7 +19,6 @@ const toggleSidebar = () => {
 const handleClickOutside = (e) => {
   const sidebar = document.querySelector('.sidebar')
   const button = document.querySelector('.sidebar-toggle')
-
   if (
     isOpen.value &&
     sidebar &&
@@ -28,14 +29,11 @@ const handleClickOutside = (e) => {
   }
 }
 
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
+const handleScroll = () => {
+  const header = document.querySelector('header')
+  if (!header) return
+  fullHeight.value = header.getBoundingClientRect().bottom <= 0
+}
 
 const sections = ref({
   communities: true,
@@ -50,8 +48,18 @@ const toggleSection = (name) => {
 const toggleCommunity = (c) => {
   active.has(c) ? active.delete(c) : active.add(c)
 }
-</script>
 
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+  window.addEventListener('scroll', handleScroll)
+  handleScroll()
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+  window.removeEventListener('scroll', handleScroll)
+})
+</script>
 
 <template>
   <div class="sidebar-container">
@@ -62,74 +70,60 @@ const toggleCommunity = (c) => {
     >
       ☰
     </button>
-  <aside class="sidebar" :class="{ open: isOpen }" @click.stop>
 
+    <aside class="sidebar" :class="{ open: isOpen, full: fullHeight }" @click.stop>
+      <div class="sidebar-content">
+        <!-- Communities -->
+        <section class="sidebar-section">
+          <div class="section-header" @click="toggleSection('communities')">
+            <span class="arrow">{{ sections.communities ? '▼' : '▶' }}</span>
+            <h3>Communities</h3>
+          </div>
+          <div v-show="sections.communities">
+            <div
+              v-for="c in communities"
+              :key="c"
+              class="item"
+              @click="toggleCommunity(c)"
+            >
+              <img class="bell" :src="active.has(c) ? bellLoud : bellMuted" alt="bell" />
+              <span>{{ c }}</span>
+            </div>
+          </div>
+          <hr class="section-line" />
+        </section>
 
-  <div class="sidebar-content" @click.stop>
-    <section class="sidebar-section">
-      <div class="section-header" @click="toggleSection('communities')">
-        <span class="arrow">{{ sections.communities ? '▼' : '▶' }}</span>
-        <h3>Communities</h3>
+        <!-- Events -->
+        <section class="sidebar-section">
+          <div class="section-header" @click="toggleSection('events')">
+            <span class="arrow">{{ sections.events ? '▼' : '▶' }}</span>
+            <h3>Events</h3>
+          </div>
+          <div v-show="sections.events">
+            <div class="item plain">Workshop</div>
+            <div class="item plain">Exhibition</div>
+          </div>
+          <hr class="section-line" />
+        </section>
+
+        <!-- Chats -->
+        <section class="sidebar-section">
+          <div class="section-header" @click="toggleSection('chats')">
+            <span class="arrow">{{ sections.chats ? '▼' : '▶' }}</span>
+            <h3>Chats</h3>
+          </div>
+          <div v-show="sections.chats">
+            <div class="item plain">Photographers</div>
+            <div class="item plain">Beginners</div>
+          </div>
+          <hr class="section-line" />
+        </section>
       </div>
-
-      <div v-show="sections.communities">
-        <div
-          v-for="c in communities"
-          :key="c"
-          class="item"
-          @click="toggleCommunity(c)"
-        >
-          <img
-            class="bell"
-            :src="active.has(c) ? bellLoud : bellMuted"
-            alt="bell"
-          />
-          <span>{{ c }}</span>
-        </div>
-      </div>
-
-      <hr class="section-line" />
-    </section>
-
-
-
-
-    <section class="sidebar-section">
-      <div class="section-header" @click="toggleSection('events')">
-        <span class="arrow">{{ sections.events ? '▼' : '▶' }}</span>
-        <h3>Events</h3>
-      </div>
-
-      <div v-show="sections.events">
-        <div class="item plain">Workshop</div>
-        <div class="item plain">Exhibition</div>
-      </div>
-
-      <hr class="section-line" />
-    </section>
-
-    <section class="sidebar-section">
-      <div class="section-header" @click="toggleSection('chats')">
-        <span class="arrow">{{ sections.chats ? '▼' : '▶' }}</span>
-        <h3>Chats</h3>
-      </div>
-
-      <div v-show="sections.chats">
-        <div class="item plain">Photographers</div>
-        <div class="item plain">Beginners</div>
-      </div>
-
-      <hr class="section-line" />
-    </section>
-    </div>
-
-
-  </aside>
+    </aside>
   </div>
 </template>
 
-<style>
-
+<style scoped>
 .sidebar-container {
   position: fixed;
   top: var(--header-height);
@@ -139,20 +133,27 @@ const toggleCommunity = (c) => {
   z-index: 20;
 }
 
-
 .sidebar {
-  position: relative;
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
   width: var(--sidebar-width);
   height: 100%;
   background: var(--white);
   border-right: 1px solid var(--border);
   transform: translateX(-260px);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, top 0.3s ease, height 0.3s ease;
   overflow-y: auto;
+  z-index: 20;
 }
 
 .sidebar.open {
   transform: translateX(0);
+}
+
+.sidebar.full {
+  top: 0;
+  height: 100vh;
 }
 
 .sidebar-content {
@@ -225,16 +226,5 @@ h3 {
   border: none;
   border-bottom: 1px solid var(--border);
   margin: 8px 0;
-}
-
-.sidebar-footer {
-  margin-top: auto;
-  padding-top: 20px;
-  text-align: center;
-}
-
-blockquote {
-  font-size: 1.1rem;
-  font-weight: 600;
 }
 </style>

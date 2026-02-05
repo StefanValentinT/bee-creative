@@ -1,12 +1,22 @@
 <script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+
 import AppHeader from './components/AppHeader.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import ContentFeed from './components/ContentFeed.vue'
 import AppFooter from './components/AppFooter.vue'
+import Splash from './components/Splash.vue'
 
-import { ref, computed, watch } from 'vue'
 import { communities, posts } from './data/dummyData'
 
+const showSplash = ref(true) 
+
+
+onMounted(() => {
+  setTimeout(() => {
+    showSplash.value = false
+  }, 5000)
+})
 
 const active = ref(
   new Set(JSON.parse(localStorage.getItem('filters')) || communities)
@@ -25,26 +35,40 @@ const filteredPosts = computed(() =>
       return bH - aH || bM - aM
     })
 )
-
-
 </script>
 
 <template>
   <div class="app-container">
 
-    <AppHeader />
-
-    <div class="main-layout">
-      <AppSidebar :communities="communities" :active="active" />
-
-      <ContentFeed class="feed" :posts="filteredPosts" />
+    <div v-if="showSplash" class="splash-screen">
+      <Splash/>
     </div>
 
-    <AppFooter />
+    <div v-else>
+      <AppHeader />
+
+      <div class="main-layout">
+        <AppSidebar :communities="communities" :active="active" />
+        <ContentFeed class="feed" :posts="filteredPosts" />
+      </div>
+
+      <AppFooter />
+    </div>
+
   </div>
 </template>
 
 <style>
+.splash-screen {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  color: #fff;
+}
+
+
 :root {
   --header-height: 120px;
   --sidebar-width: 260px;
@@ -57,7 +81,6 @@ html, body, #app {
   margin: 0;
   height: 100%;
   width: 100%;
-  
 }
 
 .app-container {
@@ -76,7 +99,6 @@ header, footer {
   min-height: 0;  
 }
 
-
 .feed {
   flex: 1;            
   padding: 0 5%;       
@@ -86,5 +108,4 @@ header, footer {
   min-height: 0;
   -webkit-overflow-scrolling: touch;
 }
-
 </style>

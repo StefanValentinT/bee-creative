@@ -7,7 +7,6 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-
 import SimplexNoise from 'simplex-noise'
 
 const noise = new SimplexNoise()
@@ -41,11 +40,14 @@ function drawHexGrid() {
   const vertDist = (hexHeight * 0.75) + HEX_PADDING * 3
   const vertShift = vertDist / 2
 
-  const cols = Math.ceil(rect.width / horizDist)
-  const rows = Math.ceil(rect.height / vertDist) + 2
+  const extraCols = 2
+  const extraRows = 2
 
-  const startX = HEX_RADIUS + HEX_PADDING / 2
-  const startY = HEX_RADIUS + HEX_PADDING / 2 - vertDist
+  const cols = Math.ceil(rect.width / horizDist) + extraCols * 2
+  const rows = Math.ceil(rect.height / vertDist) + extraRows * 2
+
+  const startX = -extraCols * horizDist + HEX_RADIUS + HEX_PADDING / 2
+  const startY = -extraRows * vertDist + HEX_RADIUS + HEX_PADDING / 2
 
   for (let col = 0; col < cols; col++) {
     const offsetY = (col % 2) * vertShift
@@ -53,16 +55,13 @@ function drawHexGrid() {
       const x = startX + col * horizDist
       const y = startY + row * vertDist + offsetY
 
-      if (x + HEX_RADIUS > rect.width || y + HEX_RADIUS < 0 || y - HEX_RADIUS > rect.height) continue
+      if (x + HEX_RADIUS < 0 || x - HEX_RADIUS > rect.width) continue
+      if (y + HEX_RADIUS < 0 || y - HEX_RADIUS > rect.height) continue
 
-const n = noise.noise2D(col / 5, row / 5) 
+      const n = noise.noise2D(col / 5, row / 5)
 
-if (n > 0.2) {
-  drawHex(ctx, x, y, HEX_RADIUS, COLORS[0])
-} else if (n < -0.2) {
-  drawHex(ctx, x, y, HEX_RADIUS, COLORS[1])
-}
-
+      if (n > 0.2) drawHex(ctx, x, y, HEX_RADIUS, COLORS[0])
+      else if (n < -0.2) drawHex(ctx, x, y, HEX_RADIUS, COLORS[1])
     }
   }
 
