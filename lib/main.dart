@@ -32,14 +32,9 @@ class SocialHomePage extends StatefulWidget {
 class _SocialHomePageState extends State<SocialHomePage> {
   final OpenSimplexNoise noise = OpenSimplexNoise(42);
 
-  String selectedCommunity = "All";
-  Map<String, bool> communityMuted = {
-    "All": false,
-    "Art": false,
-    "Tech": false,
-    "Flutter": false,
-    "Gaming": false,
-  };
+  final Set<String> selectedCommunities = {};
+
+  final Set<String> mutedCommunities = {};
 
   final List<Map<String, dynamic>> posts = [
     {
@@ -58,21 +53,30 @@ class _SocialHomePageState extends State<SocialHomePage> {
     },
     {
       "title": "Nix is the best package manager and OS.",
-      "community": "Comuterphile",
+      "community": "Computerphile",
       "content": "Obviously.",
       "likes": 100,
       "dislikes": 0,
     },
   ];
 
+  List<String> get communities =>
+      posts.map((p) => p["community"] as String).toSet().toList();
+
   List<Map<String, dynamic>> get filteredPosts {
-    return posts
-        .where(
-          (p) =>
-              selectedCommunity == "All" || p["community"] == selectedCommunity,
-        )
-        .where((p) => !communityMuted[p["community"]]!)
-        .toList();
+    return posts.where((p) {
+      final community = p["community"] as String;
+
+      if (mutedCommunities.contains(community)) {
+        return false;
+      }
+
+      if (selectedCommunities.isEmpty) {
+        return true;
+      }
+
+      return selectedCommunities.contains(community);
+    }).toList();
   }
 
   @override
@@ -88,6 +92,7 @@ class _SocialHomePageState extends State<SocialHomePage> {
               itemCount: filteredPosts.length,
               itemBuilder: (context, index) {
                 final post = filteredPosts[index];
+
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: Padding(
@@ -168,36 +173,52 @@ class _SocialHomePageState extends State<SocialHomePage> {
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                children: communityMuted.keys.map((community) {
+                children: communities.map((community) {
+                  final isSelected = selectedCommunities.contains(community);
+                  final isMuted = mutedCommunities.contains(community);
+
                   return ListTile(
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 8,
                       vertical: 2,
                     ),
+
                     leading: IconButton(
                       icon: Icon(
-                        communityMuted[community]!
-                            ? Icons.notifications_off
-                            : Icons.notifications,
-                        color: communityMuted[community]!
-                            ? Colors.grey
-                            : Colors.amber,
+                        isMuted ? Icons.notifications_off : Icons.notifications,
+                        color: isMuted ? Colors.grey : Colors.amber,
                       ),
                       onPressed: () {
                         setState(() {
-                          communityMuted[community] =
-                              !communityMuted[community]!;
+                          if (isMuted) {
+                            mutedCommunities.remove(community);
+                          } else {
+                            mutedCommunities.add(community);
+                          }
                         });
                       },
                     ),
-                    title: Text(community),
-                    selected: selectedCommunity == community,
+
+                    title: Text(
+                      community,
+                      style: TextStyle(
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+
                     onTap: () {
                       setState(() {
-                        selectedCommunity = community;
-                        Navigator.of(context).pop();
+                        if (isSelected) {
+                          selectedCommunities.remove(community);
+                        } else {
+                          selectedCommunities.add(community);
+                        }
                       });
                     },
+
+                    selected: isSelected,
                   );
                 }).toList(),
               ),
