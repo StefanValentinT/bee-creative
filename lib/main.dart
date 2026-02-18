@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'BeeCreative Social',
+      title: 'BeeCreative',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
@@ -42,15 +42,35 @@ class _SocialHomePageState extends State<SocialHomePage> {
   };
 
   final List<Map<String, dynamic>> posts = [
-    {"title": "New Flutter 3.4!", "community": "Flutter", "content": "Check out the new features...", "likes": 0, "dislikes": 0},
-    {"title": "Game Release", "community": "Gaming", "content": "Awesome new RPG released!", "likes": 0, "dislikes": 0},
-    {"title": "AI Art", "community": "Art", "content": "Look at this cool AI painting.", "likes": 0, "dislikes": 0},
-    {"title": "Tech News", "community": "Tech", "content": "Big update from Apple today.", "likes": 0, "dislikes": 0},
+    {
+      "title": "Was soll ich spielen?",
+      "community": "Gaming",
+      "content": "Okay",
+      "likes": 0,
+      "dislikes": 0,
+    },
+    {
+      "title": "Mein neues Bild",
+      "community": "Art",
+      "content": "Gefällt es euch?",
+      "likes": 0,
+      "dislikes": 0,
+    },
+    {
+      "title": "Nix is the best package manager and OS.",
+      "community": "Comuterphile",
+      "content": "Obviously.",
+      "likes": 100,
+      "dislikes": 0,
+    },
   ];
 
   List<Map<String, dynamic>> get filteredPosts {
     return posts
-        .where((p) => selectedCommunity == "All" || p["community"] == selectedCommunity)
+        .where(
+          (p) =>
+              selectedCommunity == "All" || p["community"] == selectedCommunity,
+        )
         .where((p) => !communityMuted[p["community"]]!)
         .toList();
   }
@@ -75,7 +95,13 @@ class _SocialHomePageState extends State<SocialHomePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(post["title"], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text(
+                          post["title"],
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         Text(post["content"]),
                         const SizedBox(height: 12),
@@ -83,7 +109,10 @@ class _SocialHomePageState extends State<SocialHomePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.thumb_up, color: Colors.green),
+                              icon: const Icon(
+                                Icons.thumb_up,
+                                color: Colors.green,
+                              ),
                               onPressed: () {
                                 setState(() => post["likes"]++);
                               },
@@ -91,7 +120,10 @@ class _SocialHomePageState extends State<SocialHomePage> {
                             Text('${post["likes"]}'),
                             const SizedBox(width: 24),
                             IconButton(
-                              icon: const Icon(Icons.thumb_down, color: Colors.red),
+                              icon: const Icon(
+                                Icons.thumb_down,
+                                color: Colors.red,
+                              ),
                               onPressed: () {
                                 setState(() => post["dislikes"]++);
                               },
@@ -138,15 +170,23 @@ class _SocialHomePageState extends State<SocialHomePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 children: communityMuted.keys.map((community) {
                   return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     leading: IconButton(
                       icon: Icon(
-                        communityMuted[community]! ? Icons.notifications_off : Icons.notifications,
-                        color: communityMuted[community]! ? Colors.grey : Colors.amber,
+                        communityMuted[community]!
+                            ? Icons.notifications_off
+                            : Icons.notifications,
+                        color: communityMuted[community]!
+                            ? Colors.grey
+                            : Colors.amber,
                       ),
                       onPressed: () {
                         setState(() {
-                          communityMuted[community] = !communityMuted[community]!;
+                          communityMuted[community] =
+                              !communityMuted[community]!;
                         });
                       },
                     ),
@@ -181,10 +221,7 @@ class CombinedHeader extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CustomPaint(
-            size: Size.infinite,
-            painter: HexPainter(noise),
-          ),
+          CustomPaint(size: Size.infinite, painter: HexPainter(noise)),
           Positioned(
             left: 0,
             child: Builder(
@@ -251,9 +288,12 @@ class HexPainter extends CustomPainter {
 
         final n = noise.eval2D(col / 5, row / 5);
 
-        if (n > 0.2) paint.color = colors[0];
-        else if (n < -0.2) paint.color = colors[1];
-        else continue;
+        if (n > 0.2)
+          paint.color = colors[0];
+        else if (n < -0.2)
+          paint.color = colors[1];
+        else
+          continue;
 
         _drawHex(canvas, x, y, hexRadius, paint);
       }
@@ -266,8 +306,10 @@ class HexPainter extends CustomPainter {
       final angle = pi / 3 * i;
       final px = x + radius * cos(angle);
       final py = y + radius * sin(angle);
-      if (i == 0) path.moveTo(px, py);
-      else path.lineTo(px, py);
+      if (i == 0)
+        path.moveTo(px, py);
+      else
+        path.lineTo(px, py);
     }
     path.close();
     canvas.drawPath(path, paint);
