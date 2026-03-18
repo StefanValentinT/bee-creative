@@ -62,6 +62,16 @@ class _SocialHomePageState extends State<SocialHomePage> {
         {"text": "Nietzsches Bejahung ist von viel größerem theoretischen Anspruch..", "likes": 8, "replies": []}
       ]
     },
+    {
+      "title": "Hyprland, bester Wayland-Window-Manager?"
+      "community": "Linux Ricing",
+      "content": "Hyprland hat viele enormst unnötige Animationen- außerdem sind die config-files unübersichtlich und die Community toxisch. Alles in allem die vollkommene Verkörperung einer Cyberpunk-Dystopie. Der beste Window-Manager der jemals erstellt wurde!!!",
+      "hasLocalImage": false,
+      "likes": 54,
+      "comments": [
+        {"text": "Du hast wohl noch nie von i3 gehört...", "likes": 8, "replies": []}
+      ]
+    },
   ];
 
   List<String> get communities => posts.map((p) => p["community"] as String).toSet().toList();
