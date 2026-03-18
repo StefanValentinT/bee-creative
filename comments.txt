@@ -1,1 +1,18 @@
-
+{
+      "title": "Kann mir jemand die Aufgabe erklären?",
+      "community": "Mathematik",
+      "content": "Eine ganze Zahl d > 1 heiße steinig, wenn man d Steine so auf die Felder eines
+d x d−Schachbretts legen kann, dass sich auf keinem Feld mehr als ein Stein befindet und auf dem Feld
+in Zeile x und Spalte y genau dann ein Stein liegt, wenn die ganze Zahl x3 – y2 durch d teilbar ist
+(1 ≤ x,y ≤ d).
+Bestimme die kleinste und die größte Anzahl an steinigen Zahlen, die unter zehn aufeinander folgenden
+positiven ganzen Zahlen vorkommen können.
+Die Aufgabe ist aus der zweiten Runde des Bundeswettbewerb Mathematik 2025.
+Der Wettbewerb ist bereits vorbei, daher ist der Austausch erlaubt.
+Ich habe die Aufgabe nicht lösen können, würde sie aber gerne verstehen.",
+      "hasLocalImage": false,
+      "likes": 37,
+      "comments": [
+        {"text": "Es gibt eine Aufgabenlösung auf der Seite des Wettbewerbs: https://www.mathe-wettbewerbe.de/aufgaben", "likes": 21, "replies": [  {"text": "Vielen Dank, dass hatte ich nicht gesehen", "likes": 13, "replies": []}]}
+      ]
+    },
