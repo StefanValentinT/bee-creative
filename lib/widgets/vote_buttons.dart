@@ -1,34 +1,74 @@
 import 'package:flutter/material.dart';
 
-class FreeVoteButton extends StatelessWidget {
+class FreeVoteButton extends StatefulWidget {
   final int likes;
   final Function(int) onChanged;
   const FreeVoteButton({super.key, required this.likes, required this.onChanged});
 
   @override
-  Widget build(BuildContext context) {
-    Color scoreBg = likes > 0 ? Colors.green.withOpacity(0.2) : (likes < 0 ? Colors.red.withOpacity(0.2) : Colors.black12);
-    Color scoreText = likes > 0 ? Colors.green[700]! : (likes < 0 ? Colors.red[800]! : Colors.black54);
+  State<FreeVoteButton> createState() => _FreeVoteButtonState();
+}
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          visualDensity: VisualDensity.compact,
-          onPressed: () => onChanged(1),
-          icon: const Icon(Icons.arrow_upward, size: 20, color: Colors.green),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          decoration: BoxDecoration(color: scoreBg, borderRadius: BorderRadius.circular(4)),
-          child: Text('$likes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: scoreText)),
-        ),
-        IconButton(
-          visualDensity: VisualDensity.compact,
-          onPressed: () => onChanged(-1),
-          icon: const Icon(Icons.arrow_downward, size: 20, color: Colors.red),
-        ),
-      ],
+class _FreeVoteButtonState extends State<FreeVoteButton> {
+  int userVote = 0;
+
+  void _handleVote(int type) {
+    int change = 0;
+    if (userVote == type) {
+
+      change = -type;
+      userVote = 0;
+    } else {
+
+      change = type - userVote;
+      userVote = type;
+    }
+    widget.onChanged(change);
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.black12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            onPressed: () => _handleVote(1),
+            icon: Icon(
+              userVote == 1 ? Icons.arrow_upward_rounded : Icons.arrow_upward,
+              color: userVote == 1 ? Colors.green : Colors.grey,
+              fill: 1.0,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(
+              '${widget.likes}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: widget.likes >= 0 ? Colors.green[700] : Colors.red[800],
+              ),
+            ),
+          ),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            onPressed: () => _handleVote(-1),
+            icon: Icon(
+              userVote == -1 ? Icons.arrow_downward_rounded : Icons.arrow_downward,
+              color: userVote == -1 ? Colors.red : Colors.grey,
+              fill: 1.0,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

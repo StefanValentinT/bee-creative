@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 
-class AppSidebar extends StatelessWidget {
+class AppSidebar extends StatefulWidget {
   final List<String> communities;
-  final Set<String> selectedCommunities;
   final Set<String> mutedCommunities;
-  final Function(String) onToggleSelect;
   final Function(String) onToggleMute;
 
   const AppSidebar({
     super.key,
     required this.communities,
-    required this.selectedCommunities,
     required this.mutedCommunities,
-    required this.onToggleSelect,
     required this.onToggleMute,
   });
 
+  @override
+  State<AppSidebar> createState() => _AppSidebarState();
+}
+
+class _AppSidebarState extends State<AppSidebar> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -27,37 +28,43 @@ class AppSidebar extends StatelessWidget {
               padding: EdgeInsets.all(20.0),
               child: Text(
                 "Communities",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFFB8860B)),
+                style: TextStyle(
+                  fontSize: 22, 
+                  fontWeight: FontWeight.bold, 
+                  color: Color(0xFFB8860B)
+                ),
               ),
             ),
             const Divider(),
             Expanded(
               child: ListView.builder(
-                itemCount: communities.length,
+                itemCount: widget.communities.length,
                 itemBuilder: (context, index) {
-                  final community = communities[index];
-                  final isMuted = mutedCommunities.contains(community);
-                  final isSelected = selectedCommunities.contains(community);
+                  final community = widget.communities[index];
+
+                  final isMuted = widget.mutedCommunities.contains(community);
 
                   return ListTile(
-                    leading: IconButton(
-                      icon: Icon(
-                        isMuted ? Icons.notifications_off : Icons.notifications_active,
-                        color: isMuted ? Colors.grey : Colors.orange,
-                      ),
-                      onPressed: () => onToggleMute(community),
-                    ),
                     title: Text(
                       community,
                       style: TextStyle(
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                         color: isMuted ? Colors.grey : Colors.black87,
+                        fontWeight: isMuted ? FontWeight.normal : FontWeight.w500,
                       ),
                     ),
-                    trailing: isSelected ? const Icon(Icons.check_circle, color: Colors.orange, size: 20) : null,
-                    onTap: () => onToggleSelect(community),
-                    selected: isSelected,
-                    selectedTileColor: Colors.orange.withOpacity(0.1),
+                    trailing: IconButton(
+                      icon: Icon(
+                        isMuted ? Icons.notifications_off_outlined : Icons.notifications_active,
+                        color: isMuted ? Colors.grey : Colors.orange,
+                      ),
+                      onPressed: () {
+
+                        widget.onToggleMute(community);
+                        
+
+                        setState(() {}); 
+                      },
+                    ),
                   );
                 },
               ),

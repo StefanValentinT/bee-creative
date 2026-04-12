@@ -1,9 +1,11 @@
-import 'package:bee_creative_flutter/widgets/feed_post_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:open_simplex_noise/open_simplex_noise.dart';
+
 import 'widgets/combined_header.dart';
+import 'widgets/feed_post_preview.dart';
+import 'widgets/create_post_dialog.dart';
 import 'widgets/app_sidebar.dart';
-import 'post_detail_page.dart';
 
 class SocialHomePage extends StatefulWidget {
   const SocialHomePage({super.key});
@@ -13,118 +15,97 @@ class SocialHomePage extends StatefulWidget {
 }
 
 class _SocialHomePageState extends State<SocialHomePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final Set<String> selectedCommunities = {};
-  final Set<String> mutedCommunities = {};
   final OpenSimplexNoise noise = OpenSimplexNoise(42);
+  final _supabase = Supabase.instance.client;
+  String _searchQuery = "";
 
-  final List<Map<String, dynamic>> posts = [
-    {
-      "title": "Mein neues Bild",
-      "community": "Kunst & Künstler",
-      "content": "Gefällt es euch? Ich habe gestern dieses Bild gemalt.",
-      "hasLocalImage": true,
-      "likes": 120,
-      "comments": [
-        {
-          "text": "Sieht echt gut aus!",
-          "likes": 5,
-          "replies": [
-            {"text": "Finde ich auch 👍", "likes": 2, "replies": []}
-          ]
-        },
-        {
-          "text": "Du könntes in Rom anfangen.",
-          "likes": 10,
-          "replies": [
-            
-          ]
-        }
-      ]
-    },
-    {
-      "title": "Nix ist der beste Paketmanager.",
-      "community": "Computer",
-      "content": "Ganz offensichtlich.",
-      "hasLocalImage": false,
-      "likes": 100,
-      "comments": [
-        {"text": "Stimme zu. Jetzt dauert zwar alles Stunden zum Installieren, dafür ist mein Packagemanager mit _formal-bewiesenen_ Semantiken ausgestattet.", "likes": 10, "replies": []}
-      ]
-    },
-    {
-      "title": "Wille zur Macht?",
-      "community": "Phi",
-      "content": "Schopenhauer sieht den 'Willen' als Quelle des Leidens, die wir verneinen müssen, der Nietzsche den unbedingten 'Willen zur Macht' gegenübersetzt. Wie lässt sich der Konflikt lösen?",
-      "hasLocalImage": false,
-      "likes": 42,
-      "comments": [
-        {"text": "Nietzsches Bejahung ist von viel größerem theoretischen Anspruch..", "likes": 8, "replies": []}
-      ]
-    },
-    {
-      "title": "Hyprland, bester Wayland-Window-Manager?"
-      "community": "Linux Ricing",
-      "content": "Hyprland hat viele enormst unnötige Animationen- außerdem sind die config-files unübersichtlich und die Community toxisch. Alles in allem die vollkommene Verkörperung einer Cyberpunk-Dystopie. Der beste Window-Manager der jemals erstellt wurde!!!",
-      "hasLocalImage": false,
-      "likes": 54,
-      "comments": [
-        {"text": "Du hast wohl noch nie von i3 gehört...", "likes": 8, "replies": []}
-      ]
-    },
-  ];
+  final List<String> _communities = ['General', 'BeeCreative', 'Linux', 'Math', 'Kunst', 'Photographie'];
+  Set<String> _mutedCommunities = {};
 
-  List<String> get communities => posts.map((p) => p["community"] as String).toSet().toList();
+  void _toggleMute(String community) {
+    setState(() {
 
-  
-  List<Map<String, dynamic>> get filteredPosts {
-    
-    List<Map<String, dynamic>> list = posts.where((p) {
-      final c = p["community"] as String;
-      if (mutedCommunities.contains(c)) return false;
-      if (selectedCommunities.isEmpty) return true;
-      return selectedCommunities.contains(c);
-    }).toList();
+      final newMuted = Set<String>.from(_mutedCommunities);
 
-    
-    list.sort((a, b) => (b["likes"] as int).compareTo(a["likes"] as int));
-    
-    return list;
+      if (newMuted.contains(community)) {
+        newMuted.remove(community);
+      } else {
+        newMuted.add(community);
+      }
+
+      _mutedCommunities = newMuted;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       backgroundColor: const Color(0xFFFDF5E6),
+      
+
       drawer: AppSidebar(
-        communities: communities,
-        selectedCommunities: selectedCommunities,
-        mutedCommunities: mutedCommunities,
-        onToggleSelect: (c) => setState(() => selectedCommunities.contains(c) ? selectedCommunities.remove(c) : selectedCommunities.add(c)),
-        onToggleMute: (c) => setState(() => mutedCommunities.contains(c) ? mutedCommunities.remove(c) : mutedCommunities.add(c)),
+        communities: _communities,
+        mutedCommunities: _mutedCommunities,
+        onToggleMute: _toggleMute,
       ),
-      
-body: SafeArea(
-  child: Column(
-    children: [
-      CombinedHeader(noise: noise, title: 'BeeCreative'),
-      
-      const SizedBox(height: 8), 
-      Expanded(
-        child: ListView.builder(
-          
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 20), 
-          itemCount: filteredPosts.length,
-          itemBuilder: (context, index) => FeedPostPreview(
-            post: filteredPosts[index], 
-            onUpdate: () => setState(() {})
-          ),
+
+      body: SafeArea(
+        child: Stack(
+          children: [
+
+            Column(
+              children: [
+                const SizedBox(height: 80), 
+                Expanded(
+                  child: StreamBuilder<List<Map<String, dynamic>>>(
+                    stream: _supabase.from('posts').stream(primaryKey: ['id']).order('created_at'),
+                    builder: (context, snapshot) {
+  if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+
+  final filteredPosts = snapshot.data!.where((post) {
+    final title = post['title']?.toString().toLowerCase() ?? "";
+    final community = post['community']?.toString() ?? "General";
+    
+
+    bool matchesSearch = title.contains(_searchQuery.toLowerCase());
+    
+
+    bool isNotMuted = !_mutedCommunities.contains(community);
+
+    return matchesSearch && isNotMuted;
+  }).toList();
+
+  return ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: filteredPosts.length,
+                        itemBuilder: (context, index) => FeedPostPreview(
+                          post: filteredPosts[index],
+                          onUpdate: () {},
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: CombinedHeader(
+                noise: noise,
+                title: 'BeeCreative',
+                onCreatePost: () => showDialog(
+                  context: context,
+                  builder: (context) => const CreatePostDialog(),
+                ),
+                onSearch: (val) => setState(() => _searchQuery = val),
+              ),
+            ),
+          ],
         ),
       ),
-    ],
-  ),
-),
     );
   }
 }
