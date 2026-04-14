@@ -106,7 +106,7 @@ class _CombinedHeaderState extends State<CombinedHeader> {
                             setState(() => _isMenuOpen = false);
                             widget.onCreatePost();
                           },
-                          color: Colors.grey,
+                         
                         ),
                         const SizedBox(width: 8),
                         _CircleIconButton(
